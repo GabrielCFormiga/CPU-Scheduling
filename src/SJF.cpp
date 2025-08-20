@@ -1,8 +1,11 @@
 #include "SJF.hpp"
+#include <queue>
 
 #define resposta 0
 #define espera 1
 #define retorno 2
+
+typedef std::pair<size_t, size_t> pico; // {duracao, index do processo}
 
 SJF::SJF(const std::vector<processo>& processos) : processos(processos) {
     tempos.resize(processos.size(), std::vector<size_t>(3));
@@ -14,6 +17,8 @@ void SJF::calcular_tempos() {
     std::sort(processos.begin(), processos.end(), [](const processo& a, const processo& b) {
         return a.t_chegada < b.t_chegada;
     });
+
+    std::priority_queue<pico, std::vector<pico>, std::greater<pico>> fila_de_prontos;
     
     // tratamento dos primeiros processos
     fila_de_prontos.push({processos[0].duracao, 0});
@@ -42,13 +47,23 @@ void SJF::calcular_tempos() {
         }
 
         if (fila_de_prontos.empty()) {
-            // a fila de prontos estava vazia e o proximo processo a chegar executa imediatamente
+            // a fila de prontos estava vazia
             // eh impossivel a filar de prontos estar vazia aqui com i_chegada == processos.size()
-            tempos[i_chegada][resposta] = 0;
-            tempos[i_chegada][espera] = 0;
-            tempos[i_chegada][retorno] = processos[i_chegada].duracao;
-            tempo_atual = processos[i_chegada].t_chegada + processos[i_chegada].duracao;
+
+            tempo_atual = processos[i_chegada].t_chegada;
             i_chegada++;
+
+            while (i_chegada < processos.size() && processos[i_chegada].t_chegada <= tempo_atual) {
+                fila_de_prontos.push({processos[i_chegada].duracao, i_chegada});
+                i_chegada++;
+            }
+
+            execucao = fila_de_prontos.top();
+
+            tempos[execucao.second][resposta] = 0;
+            tempos[execucao.second][espera] = 0;
+            tempos[execucao.second][retorno] = processos[execucao.second].duracao;
+            tempo_atual = processos[execucao.second].t_chegada + processos[execucao.second].duracao;
         } else {
             // a fila nao estava vazia, entao executamos o proximo processo imediatamente
             execucao = fila_de_prontos.top();

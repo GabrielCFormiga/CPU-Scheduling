@@ -12,8 +12,6 @@ FCFS::FCFS(const std::vector<processo>& processos) : processos(processos) {
 }
 
 void FCFS::calcular_tempos() {
-    std::vector<std::vector<size_t>> tempos(processos.size(), std::vector<size_t>(3));
-
     std::sort(processos.begin(), processos.end(), [](const processo& a, const processo& b) {
         return a.t_chegada < b.t_chegada;
     });

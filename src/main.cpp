@@ -1,9 +1,10 @@
-#include "FCFS.hpp"
-#include "SJF.hpp"
 #include <iostream>
 #include <vector>
 #include <fstream>
 #include <iomanip>
+#include "FCFS.hpp"
+#include "SJF.hpp"
+#include "RR.hpp"
 
 using namespace std;
 
@@ -30,6 +31,7 @@ int main(int argc, char* argv[]) {
     
     FCFS fcfs(processos);
     SJF sjf(processos);
+    RR rr(processos);
 
     cout << fixed << setprecision(1);
     cout << "FCFS\t" << fcfs.get_retorno_media() << "\t" 
@@ -39,6 +41,10 @@ int main(int argc, char* argv[]) {
     cout << "SJF\t" << sjf.get_retorno_media() << "\t" 
          << sjf.get_resposta_media() << "\t" 
          << sjf.get_espera_media() << endl;
+
+    cout << "RR\t" << rr.get_retorno_media() << "\t" 
+         << rr.get_resposta_media() << "\t" 
+         << rr.get_espera_media() << endl;
 
     return 0;
 }
