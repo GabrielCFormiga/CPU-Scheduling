@@ -4,7 +4,6 @@
 #include "processo.hpp"
 #include <vector>
 #include <algorithm>
-#include <queue>
 
 class RR {
 private:

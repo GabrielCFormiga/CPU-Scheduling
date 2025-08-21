@@ -1,4 +1,5 @@
 #include "RR.hpp"
+#include <queue>
 
 #define resposta 0
 #define espera 1
@@ -17,18 +18,22 @@ void RR::calcular_tempos() {
         return a.t_chegada < b.t_chegada;
     });
 
-    std::queue<pico> fila_de_prontos; // index dos processos
+    std::queue<pico> fila_de_prontos;
     std::vector<bool> primeira_execucao(processos.size(), true);
 
-    fila_de_prontos.push({processos[0].duracao, 0});
-
-    size_t i_chegada = 1; // index do próximo processo a chegar
-    size_t tempo_atual = processos[0].t_chegada;
+    size_t i_chegada = 0; // index do próximo processo a chegar
+    size_t tempo_atual = 0;
 
     // calculo dos tempos
     // para o rr vou calcular o tempo de espera ao final, fazendo t_espera = t_retorno - t_duracao
     while (i_chegada < processos.size() || !fila_de_prontos.empty()) {
-        while (i_chegada < processos.size() && (fila_de_prontos.empty() || processos[i_chegada].t_chegada <= tempo_atual)) {
+        if (i_chegada < processos.size() && fila_de_prontos.empty()) {
+            fila_de_prontos.push({processos[i_chegada].duracao, i_chegada});
+            tempo_atual = processos[i_chegada].t_chegada;
+            i_chegada++;
+        }
+
+        while (i_chegada < processos.size() && processos[i_chegada].t_chegada <= tempo_atual) {
             fila_de_prontos.push({processos[i_chegada].duracao, i_chegada});
             i_chegada++;
         }
